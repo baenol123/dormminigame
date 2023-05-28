@@ -12,20 +12,18 @@
     #character {
       position: absolute;
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation: moveCharacter 2s linear infinite;
+      left: -100px;
+      animation: moveCharacter 10s linear infinite;
     }
 
     @keyframes moveCharacter {
-      0% { left: 30%; }
-      50% { left: 70%; }
-      100% { left: 30%; }
+      0% { left: -100px; }
+      100% { left: calc(100% + 100px); }
     }
 
     #bar {
       position: absolute;
-      top: 20px;
+      top: 60px;
       left: 50%;
       transform: translateX(-50%);
       background-color: #f00;
@@ -33,14 +31,23 @@
       height: 20px;
       transition: width 0.3s;
     }
+
+    #bar-label {
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <h1>기숙자 딴짓 게임</h1>
-  <p>스페이스 바를 누르면 딴짓을 하고, 떼면 공부하는 척을 해주세요.</p>
+  <p>스페이스 바를 누르면 딴짓을 하고, 떼면 공부하는 척을 합니다.</p>
   <div id="character">
     <img src="character.jpg" alt="Character Image" width="100" height="100">
   </div>
+  <div id="bar-label">의심도</div>
   <div id="bar"></div>
   <button onclick="startGame()">시작하기</button>
 
@@ -49,17 +56,20 @@
     let maxSuspicionLevel = 100;
     let isDoingSomething = false;
     let intervalId;
+    let idleTimeoutId;
 
     function startGame() {
       document.onkeydown = keyDownHandler;
       document.onkeyup = keyUpHandler;
       intervalId = setInterval(updateBar, 100);
+      idleTimeoutId = setTimeout(gameOver, 5000); // 5초 동안 스페이스 바 입력이 없을 시 게임 오버
     }
 
     function keyDownHandler(event) {
       if (event.code === 'Space' && !isDoingSomething) {
         isDoingSomething = true;
         increaseSuspicionLevel();
+        clearTimeout(idleTimeoutId);
       }
     }
 
@@ -67,6 +77,7 @@
       if (event.code === 'Space' && isDoingSomething) {
         isDoingSomething = false;
         decreaseSuspicionLevel();
+        idleTimeoutId = setTimeout(gameOver, 5000); // 5초 동안 스페이스 바 입력이 없을 시 게임 오버
       }
     }
 
@@ -76,7 +87,7 @@
       }
 
       if (suspicionLevel >= maxSuspicionLevel) {
-        gameOver();
+        gameOver("감독쌤에게 걸렸습니다!");
       }
     }
 
@@ -91,11 +102,14 @@
       bar.style.width = `${suspicionLevel}%`;
     }
 
-    function gameOver() {
+    function gameOver(message) {
       clearInterval(intervalId);
       document.onkeydown = null;
       document.onkeyup = null;
-      alert('게임 오버 - 감독쌤에게 걸렸습니다!');
+      if (!message) {
+        message = "딴짓을 안해서 지루해 죽었습니다!";
+      }
+      alert(message);
       resetGame();
     }
 
