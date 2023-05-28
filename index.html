@@ -12,13 +12,14 @@
     #character {
       position: absolute;
       top: 50%;
-      left: -100px;
+      left: 50%; /* 가운데 정렬 */
+      transform: translate(-50%, -50%);
       animation: moveCharacter 10s linear infinite;
     }
 
     @keyframes moveCharacter {
-      0% { left: -100px; }
-      100% { left: calc(100% + 100px); }
+      0% { left: calc(0% + 50px); } /* 최소값은 50px로 수정 */
+      100% { left: calc(100% - 150px); } /* 최대값은 화면 오른쪽에서 150px 이전으로 수정 */
     }
 
     #bar {
