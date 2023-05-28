@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>기숙자 딴짓 게임</title>
+  <style>
+    body {
+      background-color: #e9e9e9;
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+
+    #bar {
+      background-color: #f00;
+      width: 0;
+      height: 20px;
+      margin-bottom: 10px;
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <h1>기숙자 딴짓 게임</h1>
+  <p>스페이스 바를 누르면 딴짓을 하고, 떼면 공부하는 척을 해주세요.</p>
+  <div id="bar"></div>
+  <button onclick="startGame()">시작하기</button>
+
+  <script>
+    let suspicionLevel = 0;
+    let maxSuspicionLevel = 100;
+    let isDoingSomething = false;
+    let intervalId;
+
+    function startGame() {
+      document.onkeydown = keyDownHandler;
+      document.onkeyup = keyUpHandler;
+      intervalId = setInterval(updateBar, 100);
+    }
+
+    function keyDownHandler(event) {
+      if (event.code === 'Space' && !isDoingSomething) {
+        isDoingSomething = true;
+        increaseSuspicionLevel();
+      }
+    }
+
+    function keyUpHandler(event) {
+      if (event.code === 'Space' && isDoingSomething) {
+        isDoingSomething = false;
+      }
+    }
+
+    function increaseSuspicionLevel() {
+      if (suspicionLevel < maxSuspicionLevel) {
+        suspicionLevel += 10;
+      }
+
+      if (suspicionLevel >= maxSuspicionLevel) {
+        gameOver();
+      }
+    }
+
+    function updateBar() {
+      const bar = document.getElementById('bar');
+      bar.style.width = `${suspicionLevel}%`;
+    }
+
+    function gameOver() {
+      clearInterval(intervalId);
+      document.onkeydown = null;
+      document.onkeyup = null;
+      alert('게임 오버 - 감독쌤에게 걸렸습니다!');
+      resetGame();
+    }
+
+    function resetGame() {
+      suspicionLevel = 0;
+      isDoingSomething = false;
+      updateBar();
+    }
+  </script>
+</body>
+</html>
